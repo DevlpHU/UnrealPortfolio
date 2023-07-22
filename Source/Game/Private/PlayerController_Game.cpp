@@ -15,10 +15,16 @@
 APlayerController_Game::APlayerController_Game()
 {
 	static ConstructorHelpers::FClassFinder<UMainUI_Game> UI_HUD_C(TEXT("/Game/Blueprints/Widget/Main_Widget.Main_Widget_C"));
-	if (UI_HUD_C.Succeeded())	HUDWidgetClass = UI_HUD_C.Class;
+	if (UI_HUD_C.Succeeded())
+	{
+		HUDWidgetClass = UI_HUD_C.Class;
+	}
 
 	static ConstructorHelpers::FClassFinder<UUIAskParty_Game> UI_PARTY_C(TEXT("WidgetBlueprint'/Game/Blueprints/Widget/AskParty_Widget.AskParty_Widget_C'"));
-	if (UI_PARTY_C.Succeeded())	PartyWidgetClass = UI_PARTY_C.Class;
+	if (UI_PARTY_C.Succeeded())
+	{
+		PartyWidgetClass = UI_PARTY_C.Class;
+	}
 
 	GameInstance = Cast<UGameInstance_Game>(UGameplayStatics::GetGameInstance(GetWorld()));
 	InteractedNPC = nullptr;
@@ -81,7 +87,8 @@ void APlayerController_Game::PutItemToInventory(FItemData ItemData)
 					ItemData.Count = 0;
 					break;
 				}
-				else {
+				else 
+				{
 					if (Inventory[slotNum].Count <= 99)
 					{
 						ItemData.Count = Inventory[slotNum].Count + ItemData.Count - 99;
@@ -93,7 +100,8 @@ void APlayerController_Game::PutItemToInventory(FItemData ItemData)
 		}
 	}
 
-	if (ItemData.Count > 0) {
+	if (ItemData.Count > 0) 
+	{
 		ItemList.Emplace(ItemData.BaseData.Name, Inventory.Num());
 		Inventory.Emplace(ItemData);
 	}
@@ -153,7 +161,8 @@ void APlayerController_Game::ShowPartyUI(APlayer_Game* AskPlayer)
 	}
 
 	UUIAskParty_Game* widget = CreateWidget<UUIAskParty_Game>(this, PartyWidgetClass);
-	if (widget == nullptr) {
+	if (widget == nullptr) 
+	{
 		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, TEXT("widget create failed"));
 		return;
 	}

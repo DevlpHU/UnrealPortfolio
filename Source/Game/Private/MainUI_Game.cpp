@@ -29,7 +29,10 @@ void UMainUI_Game::Init()
 	Inventory_Widget->SetVisibility(ESlateVisibility::Collapsed);
 
 	Player = Cast<APlayer_Game>(GetOwningPlayerPawn());
-	if (Player == nullptr)	return;
+	if (Player == nullptr)
+	{
+		return;
+	}
 
 	Player->OnChangePartyPlayerDele.BindUObject(this, &UMainUI_Game::UpdatePartyUI);
 	Player_Widgets.Init(nullptr, Player->MaxPartyNumber);
@@ -76,7 +79,10 @@ void UMainUI_Game::UpdatePlayerExpBar()
 
 void UMainUI_Game::UpdatePlayerImage()
 {
-	if (Player == nullptr) return;
+	if (Player == nullptr)
+	{
+		return;
+	}
 
 	Image_Player->SetBrushFromTexture(Player->Symbol);
 }
@@ -85,7 +91,8 @@ void UMainUI_Game::UpdatePartyUI()
 {
 	for (int32 i = 0; i < Player->MaxPartyNumber; ++i)
 	{
-		if (Player->Party[i] == nullptr) {
+		if (Player->Party[i] == nullptr) 
+		{
 			Player_Widgets[i]->SetVisibility(ESlateVisibility::Collapsed);
 		}
 		else

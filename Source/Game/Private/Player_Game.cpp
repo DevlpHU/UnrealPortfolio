@@ -35,7 +35,10 @@ APlayer_Game::APlayer_Game()
 	Camera->SetupAttachment(SpringArm);
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_PLAYER(TEXT("/Game/Character/Player_Sword/Player_Sword.Player_Sword"));
-	if (SK_PLAYER.Succeeded())	GetMesh()->SetSkeletalMesh(SK_PLAYER.Object);
+	if (SK_PLAYER.Succeeded())
+	{
+		GetMesh()->SetSkeletalMesh(SK_PLAYER.Object);
+	}
 
 	GetCapsuleComponent()->SetCollisionProfileName(FName("CharacterMesh"));
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -GetCapsuleComponent()->GetScaledCapsuleHalfHeight()), FRotator(0.0f, -90.0f, 0.0f));
@@ -54,7 +57,10 @@ APlayer_Game::APlayer_Game()
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 
 	static ConstructorHelpers::FClassFinder<UAnimInstance> PLAYER_ANIM(TEXT("/Game/Blueprints/Anim/AnimBP_PlayerSword.AnimBP_PlayerSword_C"));
-	if (PLAYER_ANIM.Succeeded())	GetMesh()->SetAnimInstanceClass(PLAYER_ANIM.Class);
+	if (PLAYER_ANIM.Succeeded())
+	{
+		GetMesh()->SetAnimInstanceClass(PLAYER_ANIM.Class);
+	}
 
 	_CurPlayerState = ECurCharacterState::Idle;
 	PlayerStat->SetIsReplicated(true);
@@ -110,8 +116,11 @@ void APlayer_Game::CheckForwardPlayer()
 			return;
 		}
 	}
-	else ForwardPlayer = nullptr;
-	
+	else
+	{
+		ForwardPlayer = nullptr;
+	}
+
 	DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 0.1f);
 }
 
@@ -183,7 +192,10 @@ void APlayer_Game::EquipWeapon(TSubclassOf<class AItem_Game> Weapon)
 
 void APlayer_Game::UnEquipWeapon()
 {
-	if(CurEquipWeapon)	CurEquipWeapon->Destroy();
+	if (CurEquipWeapon)
+	{
+		CurEquipWeapon->Destroy();
+	}
 	CurEquipWeapon = nullptr;
 }
 
@@ -200,13 +212,17 @@ void APlayer_Game::ServerAskParty_Implementation(APlayer_Game* AskedPlayer)
 
 void APlayer_Game::ClientAskedParty_Implementation(APlayer_Game* AskPlayer)
 {
-	if (AskPlayer == nullptr) {
+	if (AskPlayer == nullptr) 
+	{
 		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, TEXT("AskPlayer Null"));
 		return;
 	}
 
 	APlayerController_Game* MyController = Cast<APlayerController_Game>(Controller);
-	if (MyController == nullptr) return;
+	if (MyController == nullptr)
+	{
+		return;
+	}
 
 	MyController->ShowPartyUI(AskPlayer);
 }
@@ -268,7 +284,10 @@ bool APlayer_Game::IsInParty(APlayer_Game* AskedPlayer)
 {
 	for (APlayer_Game* PartyPlayer : Party)
 	{
-		if (PartyPlayer == AskedPlayer)	return true;
+		if (PartyPlayer == AskedPlayer)
+		{
+			return true;
+		}
 	}
 	return false;
 }
@@ -300,13 +319,19 @@ void APlayer_Game::ServerUnEquipWeapon_Implementation()
 
 void APlayer_Game::_MoveRight(float NewAxisValue)
 {
-	if (_CurPlayerState != ECurCharacterState::Idle) return;
+	if (_CurPlayerState != ECurCharacterState::Idle)
+	{
+		return;
+	}
 	AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::Y), NewAxisValue);
 }
 
 void APlayer_Game::_MoveForward(float NewAxisValue)
 {
-	if (_CurPlayerState != ECurCharacterState::Idle) return;
+	if (_CurPlayerState != ECurCharacterState::Idle) 
+	{
+		return;
+	}
 	AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::X), NewAxisValue);
 }
 
@@ -322,15 +347,21 @@ void APlayer_Game::_LookUp(float NewAxisValue)
 
 void APlayer_Game::_Attack()
 {
-	if (!IsValid(AnimInstance) || _CurPlayerState != ECurCharacterState::Idle) return;
-	
+	if (!IsValid(AnimInstance) || _CurPlayerState != ECurCharacterState::Idle)
+	{
+		return;
+	}
+
 	ServerPlayAttackMontage();
 	_CurPlayerState = ECurCharacterState::Attacking;
 }
 
 void APlayer_Game::_Jump()
 {
-	if (!IsValid(AnimInstance) || _CurPlayerState != ECurCharacterState::Idle) return;
+	if (!IsValid(AnimInstance) || _CurPlayerState != ECurCharacterState::Idle)
+	{
+		return;
+	}
 
 	Super::Jump();
 	_CurPlayerState = ECurCharacterState::Jumping;
@@ -339,7 +370,10 @@ void APlayer_Game::_Jump()
 void APlayer_Game::_PlayerOnInteract()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, FString::FromInt(CurPlayerCount));
-	if (ForwardPlayer == nullptr) return;
+	if (ForwardPlayer == nullptr)
+	{
+		return;
+	}
 	else if (IsInParty(ForwardPlayer))
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("It's Party Player"));
@@ -361,9 +395,12 @@ void APlayer_Game::_PlayerOnInteract()
 
 void APlayer_Game::_GameOnInteract()
 {
-	if (_CurPlayerState != ECurCharacterState::Idle) return;
+	if (_CurPlayerState != ECurCharacterState::Idle)
+	{
+		return;
+	}
 	_CurPlayerState = ECurCharacterState::Interacting;
-	
+
 	TArray<FHitResult> CheckResults;
 	FCollisionQueryParams Params(NAME_None, false, this);
 	bool bResult = GetWorld()->SweepMultiByChannel(
@@ -378,11 +415,10 @@ void APlayer_Game::_GameOnInteract()
 
 	if (bResult)
 	{
-
 		for (auto CheckResult : CheckResults)
 		{
 			auto CheckItem = Cast<AItem_Game>(CheckResult.Actor);
-			auto CheckNPC  = Cast<ANPC_Game>(CheckResult.Actor);
+			auto CheckNPC = Cast<ANPC_Game>(CheckResult.Actor);
 			auto playerController = Cast<APlayerController_Game>(GetController());
 
 			if (IsValid(playerController))
@@ -403,7 +439,10 @@ void APlayer_Game::_GameOnInteract()
 			}
 		}
 	}
-	else _CurPlayerState = ECurCharacterState::Idle;
+	else
+	{
+		_CurPlayerState = ECurCharacterState::Idle;
+	}
 }
 
 void APlayer_Game::_Inventory()
@@ -413,20 +452,22 @@ void APlayer_Game::_Inventory()
 	
 	switch (InventoryWidget->GetVisibility())
 	{
-	case ESlateVisibility::Collapsed:
-	{
-		InventoryWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-		playerController->SetInputGameModes(true, true, true);
-	}
-		break;
-	case ESlateVisibility::SelfHitTestInvisible:
-	{
-		InventoryWidget->SetVisibility(ESlateVisibility::Collapsed);
-		playerController->SetInputGameModes(true, false, false);
-	}
-		break;
-	default:
-		break;
+		case ESlateVisibility::Collapsed:
+		{
+			InventoryWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+			playerController->SetInputGameModes(true, true, true);
+			break;
+		}
+		case ESlateVisibility::SelfHitTestInvisible:
+		{
+			InventoryWidget->SetVisibility(ESlateVisibility::Collapsed);
+			playerController->SetInputGameModes(true, false, false);
+			break;
+		}
+		default:
+		{
+			break;
+		}
 	}
 }
 
@@ -442,25 +483,34 @@ void APlayer_Game::_Chat()
 
 void APlayer_Game::_OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	if(Montage == AnimInstance->GetAttackMontage())
+	if (Montage == AnimInstance->GetAttackMontage())
+	{
 		_CurPlayerState = ECurCharacterState::Idle;
+	}
 }
 
 void APlayer_Game::_OnPickUpMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	if (Montage == AnimInstance->GetPickingMontage())
+	{
 		_CurPlayerState = ECurCharacterState::Idle;
+	}
 }
 
 void APlayer_Game::_JumpEnded()
 {
 	if (_CurPlayerState == ECurCharacterState::Jumping) {}
+	{
 		_CurPlayerState = ECurCharacterState::Idle;
+	}
 }
 
 void APlayer_Game::_AttackCheck()
 {
-	if (GetLocalRole() != ENetRole::ROLE_Authority) return;
+	if (GetLocalRole() != ENetRole::ROLE_Authority)
+	{
+		return;
+	}
 
 	TArray<FHitResult> HitResults;
 	FCollisionQueryParams Params(NAME_None, false, this);

@@ -18,8 +18,14 @@ void UUIInformation_Game::SetTextInformation(FText Information)
 
 void UUIInformation_Game::SetTextStat(float HP, float Attack)
 {
-	if (Attack < KINDA_SMALL_NUMBER)	Text_Stat->SetText(FText::FromString(FString::Printf(TEXT("회복체력 : %.1f"), HP)));
-	else Text_Stat->SetText(FText::FromString(FString::Printf(TEXT("공격력 : %.1f \n추가체력 : %.1f"), Attack, HP)));
+	if (Attack < KINDA_SMALL_NUMBER)
+	{
+		Text_Stat->SetText(FText::FromString(FString::Printf(TEXT("회복체력 : %.1f"), HP)));
+	}
+	else
+	{
+		Text_Stat->SetText(FText::FromString(FString::Printf(TEXT("공격력 : %.1f \n추가체력 : %.1f"), Attack, HP)));
+	}
 }
 
 void UUIInformation_Game::Setting(FItemBaseData& Data)

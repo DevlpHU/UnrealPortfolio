@@ -10,7 +10,9 @@ AGameModeBase_Game::AGameModeBase_Game()
 {
 	static ConstructorHelpers::FClassFinder<APlayer_Game> PLAYER(TEXT("Blueprint'/Game/Blueprints/Player_BP.Player_BP_C'"));
 	if (PLAYER.Succeeded())
+	{
 		DefaultPawnClass = PLAYER.Class;
+	}
 
 	PlayerControllerClass = APlayerController_Game::StaticClass();
 	PlayerStateClass = APlayerState_Game::StaticClass();

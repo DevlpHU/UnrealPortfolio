@@ -20,8 +20,10 @@ void UAnimInstance_Game::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		CurrentPawnSpeed = Pawn->GetVelocity().Size();
 		auto Character = Cast<ACharacter>(Pawn);
-		if (Character)	
+		if (Character)
+		{
 			IsInAir = Character->GetMovementComponent()->IsFalling();
+		}
 	}
 }
 
@@ -68,11 +70,16 @@ void UAnimInstance_Game::AnimNotify_OnChargeTimer()
 	for (int32 i = 0; i < SkillMontageArray.Num(); ++i)
 	{
 		if (GetCurrentActiveMontage() == SkillMontageArray[i])
+		{
 			CurrentSkillIndex = i;
+		}
 	}
 
-	if (CurrentSkillIndex == -1) return;
-	
+	if (CurrentSkillIndex == -1)
+	{
+		return;
+	}
+
 	SetTime();
 	
 	if (Montage_IsPlaying(SkillMontageArray[CurrentSkillIndex]))
@@ -105,11 +112,20 @@ void UAnimInstance_Game::SetTime()
 {
 	switch (CurrentSkillIndex)
 	{
-	case 2:
-	{	Time = 3.f;	}	break;
-	case 3:
-	{	Time = 7.f;	}	break;
-	default:
-	{	Time = -1.f;}	break;
+		case 2:
+		{
+			Time = 3.f;
+			break;
+		}
+		case 3:
+		{
+			Time = 7.f;
+			break;
+		}
+		default:
+		{
+			Time = -1.f;
+			break;
+		}
 	}
 }

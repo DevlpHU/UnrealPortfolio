@@ -24,7 +24,9 @@ EBTNodeResult::Type UBTTask_FindPatrolPos_Game::ExecuteTask(UBehaviorTreeCompone
 
 	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(ControllingPawn->GetWorld());
 	if (nullptr == NavSystem)
+	{
 		return EBTNodeResult::Failed;
+	}
 
 	FVector Origin = OwnerComp.GetBlackboardComponent()->GetValueAsVector(AAIController_Game::HomePosKey);
 	FNavLocation NextPatrol;

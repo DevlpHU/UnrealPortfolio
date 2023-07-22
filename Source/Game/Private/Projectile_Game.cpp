@@ -13,6 +13,7 @@ AProjectile_Game::AProjectile_Game()
 	{
 		RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("ProjectileSceneComponent"));
 	}
+	
 	if (!CollisionComponent)
 	{
 		// Use a sphere as a simple collision representation.

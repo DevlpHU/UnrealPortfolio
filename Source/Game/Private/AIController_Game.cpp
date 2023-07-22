@@ -33,8 +33,11 @@ void AAIController_Game::RestartAI()
 void AAIController_Game::StopAI()
 {
 	auto behaviorTreeComponent = Cast<UBehaviorTreeComponent>(BrainComponent);
-	if (behaviorTreeComponent == nullptr) return;
-	
+	if (behaviorTreeComponent == nullptr)
+	{
+		return;
+	}
+
 	ResetTarget();
 	behaviorTreeComponent->StopTree(EBTStopMode::Safe);
 }

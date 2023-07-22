@@ -29,7 +29,8 @@ void AItem_Game::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if (GetLocalRole() == ROLE_SimulatedProxy && !Name.IsNone()) {
+	if (GetLocalRole() == ROLE_SimulatedProxy && !Name.IsNone()) 
+	{
 		Data.BaseData = (*Cast<UGameInstance_Game>(UGameplayStatics::GetGameInstance(GetWorld()))->GetItemBaseData(Name));
 	}
 }

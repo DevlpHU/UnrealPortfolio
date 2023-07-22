@@ -19,11 +19,16 @@ bool UBTDecorator_IsInAttackRange_Game::CalculateRawConditionValue(UBehaviorTree
 	auto ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
 
 	if (nullptr == ControllingPawn)
+	{
 		return false;
+	}
 
 	auto Target = Cast<APlayer_Game>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(AAIController_Game::TargetKey));
 	if (nullptr == Target)
+	{
 		return false;
+	}
+
 	bResult = (Target->GetDistanceTo(ControllingPawn) <= Distance);
 	return bResult;
 }

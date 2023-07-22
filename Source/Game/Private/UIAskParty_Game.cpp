@@ -15,14 +15,20 @@ void UUIAskParty_Game::NativeConstruct()
 void UUIAskParty_Game::ControllerInputInit()
 {
 	APlayerController_Game* controller = Cast<APlayerController_Game>(GetOwningPlayer());
-	if (controller == nullptr) return;
+	if (controller == nullptr)
+	{
+		return;
+	}
 
 	controller->SetInputGameModes(true, false, false);
 }
 
 void UUIAskParty_Game::Accept()
 {
-	if (AskPlayer == nullptr) return;
+	if (AskPlayer == nullptr)
+	{
+		return;
+	}
 
 	Cast<APlayer_Game>(GetOwningPlayerPawn())->AcceptParty(AskPlayer);
 	
@@ -32,7 +38,10 @@ void UUIAskParty_Game::Accept()
 
 void UUIAskParty_Game::Refuse()
 {
-	if (AskPlayer == nullptr) return;
+	if (AskPlayer == nullptr)
+	{
+		return;
+	}
 
 	this->RemoveFromParent();
 	ControllerInputInit();
@@ -40,7 +49,8 @@ void UUIAskParty_Game::Refuse()
 
 bool UUIAskParty_Game::SetAskPlayer(APlayer_Game* AskPlyr)
 {
-	if (AskPlyr == nullptr) {
+	if (AskPlyr == nullptr) 
+	{
 		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, TEXT("widget Askplayer Null"));
 		return false;
 	}

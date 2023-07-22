@@ -22,7 +22,10 @@ UUISlot_Game::UUISlot_Game(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer)
 {
 	static ConstructorHelpers::FClassFinder<UUIInformation_Game> UI_INF_C(TEXT("WidgetBlueprint'/Game/Blueprints/Widget/Information_Widget.Information_Widget_C'"));
-	if (UI_INF_C.Succeeded())	InforWidgetClass = UI_INF_C.Class;
+	if (UI_INF_C.Succeeded())
+	{
+		InforWidgetClass = UI_INF_C.Class;
+	}
 
 	Type = ESlotType::None;
 }
@@ -100,11 +103,23 @@ void UUISlot_Game::Refresh(FItemData& ItemData)
 	Image_Slot->Brush.DrawAs = ESlateBrushDrawType::Image;
 
 	Text_Count->SetText(FText::FromString(FString::FromInt(ItemData.Count)));
-	if (ItemData.Count > 1)	Text_Count->SetVisibility(ESlateVisibility::Visible);
-	else					Text_Count->SetVisibility(ESlateVisibility::Collapsed);
+	if (ItemData.Count > 1)
+	{
+		Text_Count->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		Text_Count->SetVisibility(ESlateVisibility::Collapsed);
+	}
 
-	if (ItemData.IsEquip)	Text_Equip->SetVisibility(ESlateVisibility::Visible);
-	else					Text_Equip->SetVisibility(ESlateVisibility::Collapsed);
+	if (ItemData.IsEquip)
+	{
+		Text_Equip->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		Text_Equip->SetVisibility(ESlateVisibility::Collapsed);
+	}
 }
 
 void UUISlot_Game::DefaultRefresh()
@@ -125,16 +140,20 @@ FReply UUISlot_Game::NativeOnMouseButtonDown(const FGeometry& InGeometry, const 
 	{
 		switch (Type)
 		{
-		case ESlotType::Inventory:
-		{
-			Use();
-		}
-		break;
-		case ESlotType::Store:
-		{
-			Buy();
-		}
-		break;
+			case ESlotType::Inventory:
+			{
+				Use();
+				break;
+			}
+			case ESlotType::Store:
+			{
+				Buy();
+				break;
+			}
+			default:
+			{
+				break;
+			}
 		}
 	}
 
@@ -146,9 +165,13 @@ FReply UUISlot_Game::NativeOnMouseMove(const FGeometry& InGeometry, const FPoint
 	FEventReply reply;
 	reply.NativeReply = Super::NativeOnMouseMove(InGeometry, InMouseEvent);
 	
-	if (SlotNum == -1) return reply.NativeReply;
+	if (SlotNum == -1)
+	{
+		return reply.NativeReply;
+	}
 
-	if (IsValid(MainPanelSlotInfor)) {
+	if (IsValid(MainPanelSlotInfor)) 
+	{
 		MainPanelSlotInfor->SetPosition(InMouseEvent.GetScreenSpacePosition());
 	}
 
@@ -157,34 +180,46 @@ FReply UUISlot_Game::NativeOnMouseMove(const FGeometry& InGeometry, const FPoint
 
 void UUISlot_Game::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	if (SlotNum == -1) return;
+	if (SlotNum == -1)
+	{
+		return;
+	}
 
 	MainPanelSlotInfor = Cast<UCanvasPanelSlot>(PlayerController->GetHUDWidget()->CanvasPanel_Main->AddChild(InforWidget));
 
-	if (IsValid(MainPanelSlotInfor)) {
+	if (IsValid(MainPanelSlotInfor)) 
+	{
 		switch (Type)
 		{
-		case ESlotType::Inventory:
-		{
-			InforWidget->Setting(PlayerController->GetInventory()[SlotNum].BaseData);
+			case ESlotType::Inventory:
+			{
+				InforWidget->Setting(PlayerController->GetInventory()[SlotNum].BaseData);
+				break;
+			}
+			case ESlotType::Store:
+			case ESlotType::Quest:
+			{
+				auto npc = PlayerController->GetInteractedNPC();
+				auto instance = Cast<UGameInstance_Game>(UGameplayStatics::GetGameInstance(GetWorld()));
+				InforWidget->Setting(*(instance->GetItemBaseData(Cast<AItem_Game>(npc->GetItemList()[SlotNum].GetDefaultObject())->Name)));
+				break;
+			}
+			default:
+			{
+				break;
+			}
 		}
-		break;
-		case ESlotType::Store:
-		case ESlotType::Quest:
-		{
-			auto npc = PlayerController->GetInteractedNPC();
-			auto instance = Cast<UGameInstance_Game>(UGameplayStatics::GetGameInstance(GetWorld()));
-			InforWidget->Setting(*(instance->GetItemBaseData(Cast<AItem_Game>(npc->GetItemList()[SlotNum].GetDefaultObject())->Name)));
-		}
-		break;
-		}
+
 		MainPanelSlotInfor->SetSize(FVector2D(200.0f, 200.0f));
 	}
 }
 
 void UUISlot_Game::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {
-	if (SlotNum == -1) return;
+	if (SlotNum == -1)
+	{
+		return;
+	}
 
 	InforWidget->RemoveFromParent();
 }

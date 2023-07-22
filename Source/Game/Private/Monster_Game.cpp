@@ -21,7 +21,10 @@ AMonster_Game::AMonster_Game()
 	MonsterStat->SetStatDataType(EStatComponentType::Monster);
 	
 	static ConstructorHelpers::FClassFinder<ADamageRenderActor_Game> DAMAGEACTOR_C(TEXT("Blueprint'/Game/Blueprints/DamageTextActor_BP.DamageTextActor_BP_C'"));
-	if (DAMAGEACTOR_C.Succeeded())	DamageActorClass = DAMAGEACTOR_C.Class;
+	if (DAMAGEACTOR_C.Succeeded())
+	{
+		DamageActorClass = DAMAGEACTOR_C.Class;
+	}
 
 	GetMesh()->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
@@ -93,7 +96,10 @@ void AMonster_Game::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 
 void AMonster_Game::MulticastDead_Implementation()
 {
-	if (!IsValid(AnimInstance)) return;
+	if (!IsValid(AnimInstance))
+	{
+		return;
+	}
 
 	AnimInstance->PlayDeadMontage();
 }
@@ -110,44 +116,55 @@ void AMonster_Game::SetState()
 	if (GetLocalRole() == ENetRole::ROLE_Authority)
 	{
 		AAIController_Game* AIController = Cast<AAIController_Game>(Controller);
-		if (AIController == nullptr) return;
+		if (AIController == nullptr)
+		{
+			return;
+		}
 
 		switch (CurMonsterState)
 		{
-		case ECurCharacterState::Revive:
-		{
-			MonsterStat->Revive();
-			SetActorEnableCollision(true);
-			SetCanBeDamaged(true);
-			AIController->RestartAI();
-			CurMonsterState = ECurCharacterState::Idle;
-		}
-		break;
-		case ECurCharacterState::DeadStart:
-		{
-			AIController->StopAI();
-			MulticastDead();
-			SetActorEnableCollision(false);
-			SetCanBeDamaged(false);
-		}
-		break;
+			case ECurCharacterState::Revive:
+			{
+				MonsterStat->Revive();
+				SetActorEnableCollision(true);
+				SetCanBeDamaged(true);
+				AIController->RestartAI();
+				CurMonsterState = ECurCharacterState::Idle;
+				break;
+			}
+			case ECurCharacterState::DeadStart:
+			{
+				AIController->StopAI();
+				MulticastDead();
+				SetActorEnableCollision(false);
+				SetCanBeDamaged(false);
+				break;
+			}
+			default:
+			{
+				break;
+			}
 		}
 	}
 	else
 	{
 		switch (CurMonsterState)
 		{
-		case ECurCharacterState::Revive:
-		case ECurCharacterState::Idle:
-		{
-			GetMesh()->SetHiddenInGame(false);
-		}
-		break;
-		case ECurCharacterState::DeadEnd:
-		{
-			GetMesh()->SetHiddenInGame(true);
-		}
-		break;
+			case ECurCharacterState::Revive:
+			case ECurCharacterState::Idle:
+			{
+				GetMesh()->SetHiddenInGame(false);
+				break;
+			}
+			case ECurCharacterState::DeadEnd:
+			{
+				GetMesh()->SetHiddenInGame(true);
+				break;
+			}
+			default:
+			{
+				break;
+			}
 		}
 	}
 }
@@ -159,14 +176,20 @@ void AMonster_Game::OnRep_State()
 
 void AMonster_Game::Respawn()
 {
-	if (GetWorldTimerManager().IsTimerActive(RespawnTimerHandle) == true) return;
+	if (GetWorldTimerManager().IsTimerActive(RespawnTimerHandle) == true)
+	{
+		return;
+	}
 
 	GetWorldTimerManager().SetTimer(RespawnTimerHandle, this, &AMonster_Game::_StateToRevive, 10.f);
 }
 
 void AMonster_Game::MulitcastSkill_Implementation(int32 Num)
 {
-	if (!IsValid(AnimInstance)) return;
+	if (!IsValid(AnimInstance))
+	{
+		return;
+	}
 
 	AnimInstance->PlaySkillMontage(Num);
 
@@ -178,7 +201,10 @@ void AMonster_Game::MulitcastSkill_Implementation(int32 Num)
 
 void AMonster_Game::MulitcastAttack_Implementation()
 {
-	if (!IsValid(AnimInstance)) return;
+	if (!IsValid(AnimInstance))
+	{
+		return;
+	}
 
 	AnimInstance->PlayAttackMontage();
 
@@ -190,7 +216,10 @@ void AMonster_Game::MulitcastAttack_Implementation()
 
 void AMonster_Game::_AttackCheck()
 {
-	if (GetLocalRole() != ENetRole::ROLE_Authority) return;
+	if (GetLocalRole() != ENetRole::ROLE_Authority)
+	{
+		return;
+	}
 
 	TArray<FHitResult> HitResults;
 	FCollisionQueryParams Params(NAME_None, false, this);

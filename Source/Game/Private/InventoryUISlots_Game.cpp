@@ -25,7 +25,8 @@ void UInventoryUISlots_Game::NativeOnListItemObjectSet(UObject* ListItemObject)
 {
 	UItemDataArray_Game* itemArray = Cast<UItemDataArray_Game>(ListItemObject);
 
-	if (IsValid(itemArray)) {
+	if (IsValid(itemArray))
+	{
 		auto& itemDataArray = itemArray->ItemDataArray;
 
 		ListNum = itemArray->ListNum;
@@ -43,7 +44,10 @@ void UInventoryUISlots_Game::NativeOnListItemObjectSet(UObject* ListItemObject)
 			}
 		}
 	}
-	else GEngine->AddOnScreenDebugMessage(-1, -1, FColor::Red, TEXT("ListView Add Error<itemArray nullptr>"));
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, -1, FColor::Red, TEXT("ListView Add Error<itemArray nullptr>"));
+	}
 }
 
 void UInventoryUISlots_Game::Init()

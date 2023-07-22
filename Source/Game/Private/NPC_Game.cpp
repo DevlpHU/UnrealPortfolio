@@ -100,18 +100,22 @@ void ANPC_Game::OnInteracted(APlayerController_Game* ClientController)
 			//UI 초기화
 			switch (Type)
 			{
-			case ENPCType::Merchant:
-			{
-				auto interactionUI = Cast<UUIStore_Game>(InteractionUI);
-				interactionUI->Init(ItemList);
-			}
-			break;
-			case ENPCType::Quest:
-			{
-				auto interactionUI = Cast<UUIQuest_Game>(InteractionUI);
-				interactionUI->Init(this);
-			}
-			break;
+				case ENPCType::Merchant:
+				{
+					auto interactionUI = Cast<UUIStore_Game>(InteractionUI);
+					interactionUI->Init(ItemList);
+					break;
+				}
+				case ENPCType::Quest:
+				{
+					auto interactionUI = Cast<UUIQuest_Game>(InteractionUI);
+					interactionUI->Init(this);
+					break;
+				}
+				default:
+				{
+					break;
+				}
 			}
 
 			//UI 화면 상에 배치 후 설정
@@ -135,19 +139,23 @@ void ANPC_Game::OnInteracted(APlayerController_Game* ClientController)
 		}
 		else //퀘스트인 경우 퀘스트 수락/거절 과정에서 창을 닫아 놓을 수 있음
 		{
-
 			switch (Type)
 			{
-			case ENPCType::Quest:
-			{
-				auto interactionUI = Cast<UUIQuest_Game>(InteractionUI);
-				if (instance->QuestMap->FindQuestSolved(FName(*interactionUI->Data.Name.ToString())) == true)
+				case ENPCType::Quest:
 				{
-					return;
+					auto interactionUI = Cast<UUIQuest_Game>(InteractionUI);
+					if (instance->QuestMap->FindQuestSolved(FName(*interactionUI->Data.Name.ToString())) == true)
+					{
+						return;
+					}
+					
+					interactionUI->Progress();
+					break;
 				}
-				interactionUI->Progress();
-			}
-			break;
+				default:
+				{
+					break;
+				}
 			}
 		}
 	}
@@ -156,33 +164,41 @@ void ANPC_Game::OnInteracted(APlayerController_Game* ClientController)
 		{
 			switch (Type)
 			{
-			case ENPCType::Merchant:
-			{
-				RemoveUISetting();
-			}
-			break;
-			case ENPCType::Quest:
-			{
-				auto interactionUI = Cast<UUIQuest_Game>(InteractionUI);
-				auto questType = interactionUI->Data.ProgressType;
-
-				switch (questType)
-				{
-				case EQuestProgressType::Waiting:
-				case EQuestProgressType::Proceeding:
-				case EQuestProgressType::Complete:
-				{
-
-					interactionUI->Data.ProgressType = EQuestProgressType::End;
-				}
-				case EQuestProgressType::End:
+				case ENPCType::Merchant:
 				{
 					RemoveUISetting();
+					break;
 				}
-				break;
+				case ENPCType::Quest:
+				{
+					auto interactionUI = Cast<UUIQuest_Game>(InteractionUI);
+					auto questType = interactionUI->Data.ProgressType;
+
+					switch (questType)
+					{
+						case EQuestProgressType::Waiting:
+						case EQuestProgressType::Proceeding:
+						case EQuestProgressType::Complete:
+						{
+							interactionUI->Data.ProgressType = EQuestProgressType::End;
+							// falls through
+						}
+						case EQuestProgressType::End:
+						{
+							RemoveUISetting();
+							break;
+						}
+						default:
+						{
+							break;
+						}
+					}
+					break;
 				}
-			}
-			break;
+				default:
+				{
+					break;
+				}
 			}
 		}
 	}

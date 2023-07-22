@@ -16,10 +16,22 @@ UGameInstance_Game::UGameInstance_Game()
 	static ConstructorHelpers::FObjectFinder<UDataTable> DT_ITEMBASE(TEXT("DataTable'/Game/GameData/ItemBaseData.ItemBaseData'"));
 	static ConstructorHelpers::FObjectFinder<UDataTable> DT_QUEST(TEXT("DataTable'/Game/GameData/QuestData.QuestData'"));
 
-	if (DT_PLAYER.Succeeded())		PlayerData	= DT_PLAYER.Object;
-	if (DT_MONSTER.Succeeded())		MonsterData = DT_MONSTER.Object;
-	if (DT_ITEMBASE.Succeeded())	ItemBaseData = DT_ITEMBASE.Object;
-	if (DT_QUEST.Succeeded())		QuestData = DT_QUEST.Object;
+	if (DT_PLAYER.Succeeded())
+	{
+		PlayerData = DT_PLAYER.Object;
+	}
+	if (DT_MONSTER.Succeeded())
+	{
+		MonsterData = DT_MONSTER.Object;
+	}
+	if (DT_ITEMBASE.Succeeded())
+	{
+		ItemBaseData = DT_ITEMBASE.Object;
+	}
+	if (DT_QUEST.Succeeded())
+	{
+		QuestData = DT_QUEST.Object;
+	}
 
 	Name = FText::GetEmpty();
 }
@@ -106,47 +118,54 @@ void FItemData::Use(APlayer_Game& Player, int32 SlotNum)
 
 	switch (BaseData.Type)
 	{
-	case EItemType::None:
-		break;
-	case EItemType::Potion:
-	{
-		if (Count > 0) {
-			Player.ServerSetDamage(-BaseData.HP);
-			Count--;
-		}
-
-		if (Count <= 0)
+		case EItemType::None:
+			break;
+		case EItemType::Potion:
 		{
-			playerController->OrganizeInventory();
-			if (Player.CurEquipWeaponSlot > SlotNum) Player.CurEquipWeaponSlot--;
-		}
-	}
-	break;
-	case EItemType::Weapon:
-	{
-		float attack = 0.0f, hP = 0.0f;
-		if (IsEquip == false) {	//새로운 아이템 장착 시
-			attack = BaseData.Attack;
-			hP = BaseData.HP;
-			Player.ServerEquipWeapon(BaseData.Class);
-			if (Player.CurEquipWeaponSlot != -1) //이전에 장착 중인 아이템 존재 시 인벤토리 IsEquip 변경
-				playerController->GetInventory()[Player.CurEquipWeaponSlot].IsEquip = false;
-			Player.CurEquipWeaponSlot = SlotNum;
-		}
-		else {
-			Player.ServerUnEquipWeapon();
-			Player.CurEquipWeaponSlot = -1;
-		}
+			if (Count > 0)
+			{
+				Player.ServerSetDamage(-BaseData.HP);
+				Count--;
+			}
 
-		Player.ServerSetEquipAttack(attack);
-		Player.ServerSetEquipHP(hP);
-		IsEquip = !IsEquip;
-	}
-	break;
-	default:
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("Item Type Error!"));
-	}
+			if (Count <= 0)
+			{
+				playerController->OrganizeInventory();
+				if (Player.CurEquipWeaponSlot > SlotNum) Player.CurEquipWeaponSlot--;
+			}
+			
+			break;
+		}
+		case EItemType::Weapon:
+		{
+			float attack = 0.0f, hP = 0.0f;
+			if (IsEquip == false)
+			{	//새로운 아이템 장착 시
+				attack = BaseData.Attack;
+				hP = BaseData.HP;
+				Player.ServerEquipWeapon(BaseData.Class);
+				if (Player.CurEquipWeaponSlot != -1) //이전에 장착 중인 아이템 존재 시 인벤토리 IsEquip 변경
+				{
+					playerController->GetInventory()[Player.CurEquipWeaponSlot].IsEquip = false;
+				}
+				Player.CurEquipWeaponSlot = SlotNum;
+			}
+			else
+			{
+				Player.ServerUnEquipWeapon();
+				Player.CurEquipWeaponSlot = -1;
+			}
+
+			Player.ServerSetEquipAttack(attack);
+			Player.ServerSetEquipHP(hP);
+			IsEquip = !IsEquip;
+			break;
+		}
+		default:
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("Item Type Error!"));
+			break;
+		}
 	}
 
 	playerController->OnInventoryDele.Execute();
@@ -160,6 +179,12 @@ void FKillMap::AddKillingData(FName Name, int32 Count)
 bool FQuestMap::FindQuestSolved(FName Name)
 {
 	bool* result = Map.Find(Name);
-	if (result == nullptr) return false;
-	else return *result;
+	if (result == nullptr)
+	{
+		return false;
+	}
+	else
+	{
+		return *result;
+	}
 }

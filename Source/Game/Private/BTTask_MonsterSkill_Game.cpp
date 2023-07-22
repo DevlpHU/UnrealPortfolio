@@ -20,7 +20,9 @@ EBTNodeResult::Type UBTTask_MonsterSkill_Game::ExecuteTask(UBehaviorTreeComponen
 
 	Monster = Cast<AMonster_Game>(OwnerComp.GetAIOwner()->GetPawn());
 	if (Monster == nullptr)
+	{
 		return EBTNodeResult::Failed;
+	}
 
 	Monster->MulitcastSkill(SkillNumber);
 	IsUsingSkill = true;
@@ -41,5 +43,7 @@ void UBTTask_MonsterSkill_Game::TickTask(UBehaviorTreeComponent& OwnerComp, uint
 void UBTTask_MonsterSkill_Game::OnSkillMontageEnded_Implementation(UAnimMontage* Montage, bool bInterrupted)
 {
 	if (Monster->AnimInstance->GetSkillMontage(SkillNumber) == Montage)
+	{
 		IsUsingSkill = false;
+	}
 }

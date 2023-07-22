@@ -72,17 +72,26 @@ void UStatComponent_Game::ClientOnLevelUp_Implementation()
 
 void UStatComponent_Game::OnRep_CurrentHP()
 {
-	if (StatType == EStatComponentType::Player)	ClientOnHPChanged();
+	if (StatType == EStatComponentType::Player)
+	{
+		ClientOnHPChanged();
+	}
 }
 
 void UStatComponent_Game::OnRep_CurrentExp()
 {
-	if (StatType == EStatComponentType::Player)	ClientOnExpChanged();
+	if (StatType == EStatComponentType::Player)
+	{
+		ClientOnExpChanged();
+	}
 }
 
 void UStatComponent_Game::OnRep_Level()
 {
-	if (StatType == EStatComponentType::Player)	ClientOnLevelUp();
+	if (StatType == EStatComponentType::Player)
+	{
+		ClientOnLevelUp();
+	}
 }
 
 void UStatComponent_Game::SetNewLevel(int32 NewLevel)
@@ -93,37 +102,37 @@ void UStatComponent_Game::SetNewLevel(int32 NewLevel)
 	{
 		switch (StatType)
 		{
-		case EStatComponentType::Undefined:
-			break;
-		case EStatComponentType::Player:
-		{
-			CurrentPlayerStatData = gameInstance->GetPlayerData(NewLevel);
-			if (CurrentPlayerStatData != nullptr)
+			case EStatComponentType::Player:
 			{
-				Level = NewLevel;
-				TotalHP = CurrentPlayerStatData->MaxHP + EquipHP;
-				CurrentHP = TotalHP;
-				TotalAttack = CurrentPlayerStatData->Attack + EquipAttack;
-				CurrentExp = 0;
-				Exp = CurrentPlayerStatData->NextExp;
+				CurrentPlayerStatData = gameInstance->GetPlayerData(NewLevel);
+				if (CurrentPlayerStatData != nullptr)
+				{
+					Level = NewLevel;
+					TotalHP = CurrentPlayerStatData->MaxHP + EquipHP;
+					CurrentHP = TotalHP;
+					TotalAttack = CurrentPlayerStatData->Attack + EquipAttack;
+					CurrentExp = 0;
+					Exp = CurrentPlayerStatData->NextExp;
+				}
+				break;
 			}
-		}
-			break;
-		case EStatComponentType::Monster:
-		{
-			CurrentMonsterStatData = gameInstance->GetMonsterData(NewLevel);
-			if (CurrentMonsterStatData != nullptr)
+			case EStatComponentType::Monster:
 			{
-				Level = NewLevel;
-				TotalHP = CurrentMonsterStatData->MaxHP + EquipHP;
-				CurrentHP = TotalHP;
-				TotalAttack = CurrentMonsterStatData->Attack + EquipAttack;
-				Exp = CurrentMonsterStatData->DropExp;
+				CurrentMonsterStatData = gameInstance->GetMonsterData(NewLevel);
+				if (CurrentMonsterStatData != nullptr)
+				{
+					Level = NewLevel;
+					TotalHP = CurrentMonsterStatData->MaxHP + EquipHP;
+					CurrentHP = TotalHP;
+					TotalAttack = CurrentMonsterStatData->Attack + EquipAttack;
+					Exp = CurrentMonsterStatData->DropExp;
+				}
+				break;
 			}
-		}
-			
-		default:
-			break;
+			default:
+			{
+				break;
+			}
 		}
 		
 	}
@@ -131,8 +140,11 @@ void UStatComponent_Game::SetNewLevel(int32 NewLevel)
 
 void UStatComponent_Game::SetDamage(float NewDamage, AController* EventInstigator)
 {
-	if (IsStatDataValid() == false) return;
-	
+	if (IsStatDataValid() == false)
+	{
+		return;
+	}
+
 	CurrentHP = FMath::Clamp<float>(CurrentHP - NewDamage, 0.0f, TotalHP);
 	if (CurrentHP <= 0.0f)
 	{

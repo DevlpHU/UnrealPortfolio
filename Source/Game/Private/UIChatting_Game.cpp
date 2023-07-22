@@ -31,7 +31,10 @@ void UUIChatting_Game::OnChat()
 void UUIChatting_Game::SendBtnClick()
 {
 	APlayerController_Game* controller = Cast<APlayerController_Game>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if (IsValid(controller) == false) return;
+	if (IsValid(controller) == false)
+	{
+		return;
+	}
 
 	FText txt = ConfigureText(EditableText_Chat->GetText());
 	controller->ServerSendMessage(txt);
@@ -54,28 +57,34 @@ FText UUIChatting_Game::ConfigureText(const FText& Msg)
 void UUIChatting_Game::Committed(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	APlayerController_Game* controller = Cast<APlayerController_Game>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if (IsValid(controller) == false) return;
+	if (IsValid(controller) == false)
+	{
+		return;
+	}
 
 	switch (CommitMethod)
 	{
-	/** User committed via the enter key */
-	case ETextCommit::OnEnter:
-	{
-		if (Text.IsEmpty() == false)
+		case ETextCommit::OnEnter:
 		{
-			FText txt = ConfigureText(Text);
-			controller->ServerSendMessage(txt);
+			if (Text.IsEmpty() == false)
+			{
+				FText txt = ConfigureText(Text);
+				controller->ServerSendMessage(txt);
+			}
+			break;
 		}
-	}
-		break;
-
-	/** User committed via tabbing away or moving focus explicitly away */
-	case ETextCommit::OnUserMovedFocus:
-	{
-		if (Text.IsEmpty() == false)
-			EditableText_Chat->SetText(FText::GetEmpty());
-	}	
-		break;
+		case ETextCommit::OnUserMovedFocus:
+		{
+			if (Text.IsEmpty() == false)
+			{
+				EditableText_Chat->SetText(FText::GetEmpty());
+			}
+			break;
+		}
+		default:
+		{
+			break;
+		}
 	}
 
 	controller->SetInputGameModes(true, false, false);

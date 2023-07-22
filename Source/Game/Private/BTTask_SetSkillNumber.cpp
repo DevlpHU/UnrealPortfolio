@@ -17,7 +17,10 @@ EBTNodeResult::Type UBTTask_SetSkillNumber::ExecuteTask(UBehaviorTreeComponent& 
 	EBTNodeResult::Type result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	AMonster_Game* monster = Cast<AMonster_Game>(OwnerComp.GetAIOwner()->GetPawn());
-	if (monster == nullptr)		return EBTNodeResult::Failed;
+	if (monster == nullptr)
+	{
+		return EBTNodeResult::Failed;
+	}
 
 	int32 number;
 
@@ -31,7 +34,10 @@ EBTNodeResult::Type UBTTask_SetSkillNumber::ExecuteTask(UBehaviorTreeComponent& 
 		number = FMath::RandRange(0, 2);
 	}
 
-	if (number < 0 || number > 3)		return EBTNodeResult::Failed;
+	if (number < 0 || number > 3)
+	{
+		return EBTNodeResult::Failed;
+	}
 
 	OwnerComp.GetBlackboardComponent()->SetValueAsInt(AAIController_Game::SkillNumberKey, number);
 	return EBTNodeResult::Succeeded;

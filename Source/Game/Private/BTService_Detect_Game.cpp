@@ -19,14 +19,21 @@ void UBTService_Detect_Game::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
 	APawn* ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
-	if (nullptr == ControllingPawn) return;
+	if (nullptr == ControllingPawn)
+	{
+		return;
+	}
 
 	UWorld* World = ControllingPawn->GetWorld();
 	FVector Center = ControllingPawn->GetActorLocation();
 	float minDistance = DetectRadius;
 	auto BlackBoard = OwnerComp.GetBlackboardComponent();
 
-	if (nullptr == World) return;
+	if (nullptr == World) 
+	{
+		return;
+	}
+
 	TArray<FOverlapResult> OverlapResults;
 	FCollisionQueryParams CollisionQueryParam(NAME_None, false, ControllingPawn);
 	bool bResult = World->OverlapMultiByChannel(
@@ -49,7 +56,8 @@ void UBTService_Detect_Game::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 			{
 				auto dist = (player->GetActorLocation() - ControllingPawn->GetActorLocation()).Size();
 
-				if (minDistance >= dist) {
+				if (minDistance >= dist) 
+				{
 					BlackBoard->SetValueAsObject(AAIController_Game::TargetKey, player);
 					minDistance = dist;
 					IsPlayer = true;
@@ -58,8 +66,10 @@ void UBTService_Detect_Game::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 		}
 	}
 
-	if(IsPlayer == false)
+	if (IsPlayer == false)
+	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject(AAIController_Game::TargetKey, nullptr);
+	}
 
 	auto player = Cast<APlayer_Game>(BlackBoard->GetValueAsObject(AAIController_Game::TargetKey));
 	

@@ -19,7 +19,9 @@ EBTNodeResult::Type UBTTask_Attack_Game::ExecuteTask(UBehaviorTreeComponent& Own
 
 	Monster = Cast<AMonster_Game>(OwnerComp.GetAIOwner()->GetPawn());
 	if (Monster == nullptr)
+	{
 		return EBTNodeResult::Failed;
+	}
 
 	Monster->MulitcastAttack();
 	IsAttacking = true;

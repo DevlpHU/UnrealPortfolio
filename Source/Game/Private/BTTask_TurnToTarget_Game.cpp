@@ -19,11 +19,15 @@ EBTNodeResult::Type UBTTask_TurnToTarget_Game::ExecuteTask(UBehaviorTreeComponen
 
 	auto monster = Cast<AMonster_Game>(OwnerComp.GetAIOwner()->GetPawn());
 	if (nullptr == monster)
+	{
 		return EBTNodeResult::Failed;
+	}
 
 	auto target = Cast<APlayer_Game>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(AAIController_Game::TargetKey));
 	if (nullptr == target)
+	{
 		return EBTNodeResult::Failed;
+	}
 
 	FVector lookVector = target->GetActorLocation() - monster->GetActorLocation();
 	lookVector.Z = 0.0f;

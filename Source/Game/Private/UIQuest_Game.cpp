@@ -31,9 +31,13 @@ void UUIQuest_Game::Init(ANPC_Game* NPC)
 void UUIQuest_Game::SetVisibilityToggle()
 {
 	if (GetVisibility() == ESlateVisibility::Collapsed)
+	{
 		SetVisibility(ESlateVisibility::Visible);
+	}
 	else
+	{
 		SetVisibility(ESlateVisibility::Collapsed);
+	}
 }
 
 void UUIQuest_Game::SetTextName(FText Name)
@@ -49,8 +53,10 @@ void UUIQuest_Game::SetTextStory(FText Story)
 void UUIQuest_Game::SetNameRequire(FName Require)
 {
 	int32 count = 0;
-	if (Instance->KillMap->IsKillingData(Require)) 
+	if (Instance->KillMap->IsKillingData(Require))
+	{
 		count = Instance->KillMap->GetKillingCount(Require);
+	}
 
 	Text_Require->SetText(FText::FromString(FString::Printf(TEXT("%s (%d/%d)"), *Require.ToString(), count, Data.RequireCount)));
 }
@@ -95,9 +101,15 @@ bool UUIQuest_Game::IsComplete()
 		auto killMap = Instance->KillMap;
 		if (killMap->IsKillingData(Data.Require) == true)
 		{
-			if (killMap->GetKillingCount(Data.Require) >= Data.RequireCount) return true;
+			if (killMap->GetKillingCount(Data.Require) >= Data.RequireCount)
+			{
+				return true;
+			}
 		}
-		else return false;
+		else
+		{
+			return false;
+		}
 	}
 	
 	return false;
@@ -109,39 +121,51 @@ void UUIQuest_Game::Progress()
 
 	switch (progressType)
 	{
-	case EQuestProgressType::Waiting:
-	{
-		SetVisibilityToggle();
-	}
-	break;
-	case EQuestProgressType::Proceeding:
-	{
-		if (IsComplete() == true)
-		{
-			progressType = EQuestProgressType::Complete;
-		}
-		else
+		case EQuestProgressType::Waiting:
 		{
 			SetVisibilityToggle();
-			if(IsValid(Button_Accept)) Button_Accept->RemoveFromParent();
-			if(IsValid(Button_Refuse)) Button_Refuse->RemoveFromParent();
 			break;
 		}
-	}
-	case EQuestProgressType::Complete:
-	{
-		for (auto itemClass : Data.ItemList)
+		case EQuestProgressType::Proceeding:
 		{
-			auto itemBaseData = Instance->GetItemBaseData(Cast<AItem_Game>(itemClass->GetDefaultObject())->Name);
-			Cast<APlayerController_Game>(GetOwningPlayer())->PutItemToInventory(FItemData(*itemBaseData));
+			if (IsComplete() == true)
+			{
+				progressType = EQuestProgressType::Complete;
+				// falls through
+			}
+			else
+			{
+				SetVisibilityToggle();
+				if (IsValid(Button_Accept))
+				{
+					Button_Accept->RemoveFromParent();
+				}
+				if (IsValid(Button_Refuse))
+				{
+					Button_Refuse->RemoveFromParent();
+				}
+				break;
+			}
 		}
-		progressType = EQuestProgressType::End;
-	case EQuestProgressType::End:
-	{
-		Instance->QuestMap->SetQuestSolved(FName(*(Data.Name.ToString())), true);
-	}
-	break;
-	}
+		case EQuestProgressType::Complete:
+		{
+			for (auto itemClass : Data.ItemList)
+			{
+				auto itemBaseData = Instance->GetItemBaseData(Cast<AItem_Game>(itemClass->GetDefaultObject())->Name);
+				Cast<APlayerController_Game>(GetOwningPlayer())->PutItemToInventory(FItemData(*itemBaseData));
+			}
+			progressType = EQuestProgressType::End;
+			// falls through
+		}
+		case EQuestProgressType::End:
+		{
+			Instance->QuestMap->SetQuestSolved(FName(*(Data.Name.ToString())), true);
+			break;
+		}
+		default:
+		{
+			break;
+		}
 	}
 }
 
